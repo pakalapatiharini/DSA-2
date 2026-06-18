@@ -1,0 +1,60 @@
+public class BPlusTreeAnalysis {
+    public static void main(String[] args) {
+
+        long records = 500000000L;
+        int keySize = 64;
+        int payloadSize = 100;
+        int pointerSize = 8;
+        int pageSize = 4096;
+
+        System.out.println("YouTube Video Catalog - B+ Tree Analysis\n");
+
+        // Leaf Fanout
+        int leafFanout = pageSize / (keySize + payloadSize);
+
+        // Internal Node Fanout
+        int internalFanout = (pageSize + keySize) / (keySize + pointerSize);
+
+        // Number of Leaf Pages
+        long leafPages = (long) Math.ceil((double) records / leafFanout);
+
+        // Height Calculation
+        long nodes = leafPages;
+        int height = 1;
+
+        while (nodes > 1) {
+            nodes = (long) Math.ceil((double) nodes / internalFanout);
+            height++;
+        }
+
+        int ioCostWithoutCache = height;
+        int ioCostWithCache = Math.max(0, height - 3);
+
+        System.out.println("Given:");
+        System.out.println("Records = " + records);
+        System.out.println("Key Size = " + keySize + " bytes");
+        System.out.println("Payload Size = " + payloadSize + " bytes");
+        System.out.println("Page Size = " + pageSize + " bytes\n");
+
+        System.out.println("(i) Leaf Fanout");
+        System.out.println("Leaf Entry Size = " + (keySize + payloadSize) + " bytes");
+        System.out.println("Leaf Fanout = " + leafFanout + " entries/page\n");
+
+        System.out.println("(ii) Internal Node Fanout");
+        System.out.println("Internal Fanout = " + internalFanout + "\n");
+
+        System.out.println("(iii) Number of Leaf Pages");
+        System.out.println("Leaf Pages = " + leafPages + "\n");
+
+        System.out.println("B+ Tree Height = " + height + " levels\n");
+
+        System.out.println("Point Lookup I/O Cost");
+        System.out.println("Without Cache = " + ioCostWithoutCache + " page reads");
+        System.out.println("Top 3 Levels Cached = " + ioCostWithCache + " page reads\n");
+
+        System.out.println("Time Complexity:");
+        System.out.println("Search -> O(log n)");
+        System.out.println("Insertion -> O(log n)");
+        System.out.println("Deletion -> O(log n)");
+    }
+}
