@@ -1,0 +1,67 @@
+import java.util.*;
+
+class Edge {
+    int to, weight;
+
+    Edge(int to, int weight) {
+        this.to = to;
+        this.weight = weight;
+    }
+}
+
+public class AStarSearch {
+
+    static int aStar(int n, List<List<Edge>> adj,
+                     int source, int target,
+                     int[] heuristic) {
+
+        int[] g = new int[n];
+        Arrays.fill(g, Integer.MAX_VALUE);
+        g[source] = 0;
+
+        PriorityQueue<int[]> pq =
+            new PriorityQueue<>((a, b) ->
+                Integer.compare(a[0], b[0]));
+
+        pq.offer(new int[]{
+            heuristic[source], source
+        });
+
+        while (!pq.isEmpty()) {
+
+            int[] top = pq.poll();
+
+            int f = top[0];
+            int u = top[1];
+
+            if (u == target)
+                return g[u];
+
+            // Stale Skip
+            if (f > g[u] + heuristic[u])
+                continue;
+
+            // Relax Neighbours
+            for (Edge e : adj.get(u)) {
+
+                int newG = g[u] + e.weight;
+
+                if (newG < g[e.to]) {
+
+                    g[e.to] = newG;
+
+                    pq.offer(new int[]{
+                        newG + heuristic[e.to],
+                        e.to
+                    });
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("A* Search Demonstration");
+    }
+}
