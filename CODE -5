@@ -1,0 +1,63 @@
+import java.util.*;
+
+class HeapEntry {
+    long value;
+    int chunkId;
+
+    HeapEntry(long v, int c) {
+        value = v;
+        chunkId = c;
+    }
+}
+
+public class KWayMergeDemo {
+
+    static void kWayMerge(List<List<Long>> chunks) {
+
+        PriorityQueue<HeapEntry> heap =
+                new PriorityQueue<>(
+                        (a, b) -> Long.compare(a.value, b.value));
+
+        int[] index = new int[chunks.size()];
+
+        // Seed heap
+        for (int i = 0; i < chunks.size(); i++) {
+            if (!chunks.get(i).isEmpty()) {
+                heap.offer(new HeapEntry(chunks.get(i).get(0), i));
+                index[i] = 1;
+            }
+        }
+
+        System.out.println("Merged Output:");
+
+        while (!heap.isEmpty()) {
+
+            HeapEntry e = heap.poll();
+
+            System.out.print(e.value + " ");
+
+            int cid = e.chunkId;
+
+            if (index[cid] < chunks.get(cid).size()) {
+                heap.offer(new HeapEntry(
+                        chunks.get(cid).get(index[cid]),
+                        cid));
+                index[cid]++;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+
+        List<List<Long>> chunks = new ArrayList<>();
+
+        chunks.add(Arrays.asList(10L,25L,47L,89L));
+        chunks.add(Arrays.asList(12L,30L,51L,75L));
+        chunks.add(Arrays.asList(8L,19L,41L,92L));
+        chunks.add(Arrays.asList(15L,33L,60L,80L));
+        chunks.add(Arrays.asList(22L,38L,55L,88L));
+        chunks.add(Arrays.asList(11L,28L,49L,85L));
+
+        kWayMerge(chunks);
+    }
+}
